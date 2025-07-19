@@ -1,0 +1,32 @@
+<table class="table">
+  <thead>
+    <tr>
+      <th>ITEM</th>
+      <th>CANT</th>
+      <th>DESCRIPCIÓN</th>
+      <th class="text-right">PRECIO UNIT(S/.)</th>
+      <th class="text-right">PRECIO TOTAL(S/.)</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each cotizacion.items}}
+    <tr>
+      <td class="text-center">{{numeroItem}}</td>
+      <td class="text-center">{{cantidad}}</td>
+      <td>{{descripcion}}</td>
+      <td class="text-right">{{precioUnitarioFormatted}}</td>
+      <td class="text-right">{{totalFormatted}}</td>
+    </tr>
+    {{/each}}
+  </tbody>
+</table>
+
+<div class="total">
+  <strong>TOTAL: {{cotizacion.precioTotalFormatted}}</strong>
+</div>
+
+{{#if cotizacion.observaciones}}
+<div class="observaciones">
+  <strong>Observaciones:</strong> {{cotizacion.observaciones}}
+</div>
+{{/if}}
