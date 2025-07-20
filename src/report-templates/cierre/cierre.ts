@@ -1,22 +1,16 @@
+import { readFileSync } from 'fs';
+import { join } from 'path';
+
 export function renderCierre(cotizacion: any): string {
-    return `
-        <div class="conditions">
-            <p><strong>CONDICIONES COMERCIALES</strong></p>
-            <p><strong>Precio Total:</strong> S/ ${cotizacion.precioTotalFormatted}</p>
-            <p><strong>SON:</strong> ${cotizacion.precioTotalLetras} soles</p>
-            <p><strong>Tiempo de entrega:</strong> ${cotizacion.tiempoEntrega}</p>
-            <p><strong>Forma de pago:</strong> ${cotizacion.formaPago}</p>
-            ${cotizacion.mostrarDatosBancarios ? `
-            <div class="bank-info">
-                <p><strong>Datos Bancarios:</strong></p>
-                ${cotizacion.banco?.nombre ? `<p><strong>Banco:</strong> ${cotizacion.banco.nombre}</p>` : ''}
-                ${cotizacion.banco?.cuentaCorriente ? `<p><strong>Cuenta Corriente:</strong> ${cotizacion.banco.cuentaCorriente}</p>` : ''}
-                ${cotizacion.banco?.cuentaInterbancaria ? `<p><strong>Cuenta Interbancaria:</strong> ${cotizacion.banco.cuentaInterbancaria}</p>` : ''}
-            </div>
-            ` : ''}
-        </div>
-        <div class="closing">
-            <p>A la espera de sus gratas órdenes.</p>
-        </div>
-    `;
+    const templatePath = join(__dirname, 'cierre.html');
+    let template = readFileSync(templatePath, 'utf8');
+    template = template.replace(/\$\{cotizacion.precioTotalFormatted\}/g, cotizacion.precioTotalFormatted ?? '');
+    template = template.replace(/\$\{cotizacion.precioTotalLetras\}/g, cotizacion.precioTotalLetras ?? '');
+    template = template.replace(/\$\{cotizacion.tiempoEntrega\}/g, cotizacion.tiempoEntrega ?? '');
+    template = template.replace(/\$\{cotizacion.formaPago\}/g, cotizacion.formaPago ?? '');
+    template = template.replace(/\$\{cotizacion.banco\.nombre\}/g, cotizacion.banco?.nombre ?? '');
+    template = template.replace(/\$\{cotizacion.banco\.cuentaCorriente\}/g, cotizacion.banco?.cuentaCorriente ?? '');
+    template = template.replace(/\$\{cotizacion.banco\.cuentaInterbancaria\}/g, cotizacion.banco?.cuentaInterbancaria ?? '');
+    // Si tienes bloques condicionales, deberás procesarlos manualmente o con una función extra.
+    return template;
 }

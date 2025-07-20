@@ -1,3 +1,5 @@
+import { readFileSync } from 'fs';
+import { join } from 'path';
 import { renderHeader } from '../header/header';
 import { renderCierre } from '../cierre/cierre';
 import { renderFooter } from '../footer/footer';
@@ -5,32 +7,18 @@ import { renderIntroduccion } from '../introduccion/introduccion';
 import { renderTabla } from '../table/table';
 
 export function renderMain(empresa: any, cotizacion: any, page: number, pages: number): string {
+    const templatePath = join(__dirname, 'main.html');
+    let template = readFileSync(templatePath, 'utf8');
     const headerHtml = renderHeader(empresa, cotizacion);
     const introduccionHtml = renderIntroduccion(cotizacion);
     const tablaHtml = renderTabla(cotizacion);
     const cierreHtml = renderCierre(cotizacion);
     const footerHtml = renderFooter(page, pages);
-
-    return `
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <meta charset="UTF-8">
-            <title>Cotización ${cotizacion.numero}</title>
-            <style>
-                body { font-family: Arial, sans-serif; margin: 0; padding: 20px; color: #333; }
-                .header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid #ddd; padding-bottom: 10px; }
-                .footer { text-align: center; font-size: 10px; margin-top: 40px; color: #888; }
-            </style>
-        </head>
-        <body>
-            ${headerHtml}
-            ${introduccionHtml}
-            ${tablaHtml}
-            ${cierreHtml}
-            ${footerHtml}
-        </body>
-        </html>
-    `;
+    template = template.replace(/\$\{header\}/g, headerHtml);
+    template = template.replace(/\$\{introduccion\}/g, introduccionHtml);
+    template = template.replace(/\$\{tabla\}/g, tablaHtml);
+    template = template.replace(/\$\{cierre\}/g, cierreHtml);
+    template = template.replace(/\$\{footer\}/g, footerHtml);
+    template = template.replace(/\$\{cotizacion.numero\}/g, cotizacion.numero ?? '');
+    return template;
 }
-

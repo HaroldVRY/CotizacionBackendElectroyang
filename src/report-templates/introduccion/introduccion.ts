@@ -1,8 +1,11 @@
+import { readFileSync } from 'fs';
+import { join } from 'path';
+
 export function renderIntroduccion(cotizacion: any): string {
-    return `
-        <div class="introduccion">
-            <p>Estimados señores:</p>
-            <p>Por medio del presente, le saludamos cordialmente y a la vez le hacemos llegar nuestra lista de precios:</p>
-        </div>
-    `;
+    const templatePath = join(__dirname, 'introduccion.html');
+    let template = readFileSync(templatePath, 'utf8');
+    // Si necesitas reemplazar variables, agrégalas aquí
+    template = template.replace(/\$\{cotizacion\.cliente\}/g, cotizacion.cliente ?? '');
+    template = template.replace(/\$\{cotizacion\.receptor\}/g, cotizacion.receptor ?? '');
+    return template;
 }

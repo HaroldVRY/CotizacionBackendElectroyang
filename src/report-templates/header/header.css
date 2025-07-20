@@ -1,0 +1,11 @@
+
+.company-logo {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.logo-img {
+  width: 150px;
+  height: auto;
+  display: inline-block;
+}

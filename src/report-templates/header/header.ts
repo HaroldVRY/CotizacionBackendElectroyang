@@ -1,16 +1,13 @@
+import { readFileSync } from 'fs';
+import { join } from 'path';
+
 export function renderHeader(empresa: any, cotizacion: any): string {
-    return `
-        <div class="header">
-            <div class="company-name">${empresa.nombre}</div>
-            <div class="document-title">${empresa.servicio}</div>
-            <div class="document-info">
-                <div><strong>Cotización Nº</strong> ${cotizacion.numero}</div>
-                <div><strong>Fecha:</strong> ${cotizacion.fecha}</div>
-            </div>
-        </div>
-        <div class="client-info">
-            <p><strong>Señores:</strong><br>${cotizacion.cliente}</p>
-            <p><strong>Atención:</strong> ${cotizacion.receptor}</p>
-        </div>
-    `;
+    const templatePath = join(__dirname, 'header.html');
+    let template = readFileSync(templatePath, 'utf8');
+    // Reemplazo simple de variables (puedes mejorar con una función más robusta si lo deseas)
+    template = template.replace(/\$\{empresa\.nombre\}/g, empresa.nombre ?? '');
+    template = template.replace(/\$\{empresa\.servicio\}/g, empresa.servicio ?? '');
+    template = template.replace(/\$\{cotizacion\.numero\}/g, cotizacion.numero ?? '');
+    template = template.replace(/\$\{cotizacion\.fecha\}/g, cotizacion.fecha ?? '');
+    return template;
 }
