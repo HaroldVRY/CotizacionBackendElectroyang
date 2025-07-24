@@ -1,4 +1,20 @@
+import dotenv from 'dotenv';
 import { EmpresaInfo } from './types/index';
+
+dotenv.config();
+
+export const dbConfig = {
+  host: process.env.DB_HOST || 'localhost',
+  port: parseInt(process.env.DB_PORT || '5432'),
+  user: process.env.DB_USER || 'postgres',
+  password: process.env.DB_PASSWORD || '',
+  database: process.env.DB_NAME || 'electroyang_cotizaciones'
+};
+
+export const serverConfig = {
+  port: parseInt(process.env.PORT || '3000'),
+  environment: process.env.NODE_ENV || 'development'
+};
 
 export const empresaConfig: EmpresaInfo = {
   nombre: 'ELECTROYANG',

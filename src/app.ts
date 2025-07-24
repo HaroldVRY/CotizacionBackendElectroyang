@@ -1,53 +1,94 @@
 import express from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
 import * as bodyParser from 'body-parser';
-import { renderMain } from './report-templates/main/main';
-import { renderHeader } from './report-templates/header/header';
-import { renderCierre } from './report-templates/cierre/cierre';
-import { renderFooter } from './report-templates/footer/footer';
-import { EmpresaInfo } from './types/index';
+import { serverConfig } from './config';
+import { database } from './database/connection';
+
+// Importar rutas
+import clienteRoutes from './routes/clienteRoutes';
+import usuarioRoutes from './routes/usuarioRoutes';
+import servicioRoutes from './routes/servicioRoutes';
+import cotizacionRoutes from './routes/cotizacionRoutes';
+import reporteRoutes from './routes/reporteRoutes';
 
 const app = express();
-// const reportService = new ReportService();
 
+// Middlewares de seguridad
+app.use(helmet());
+app.use(cors());
+
+// Middlewares de parsing
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+// Archivos estáticos
 app.use(express.static('public'));
 
-const empresaInfo: EmpresaInfo = {
-  nombre: 'ELECTROYANG',
-  servicio: 'SERVICIO DE BOBINADO DE TRANSFORMADORES ELÉCTRICOS Y REPARACIONES',
-  ciudad: 'Lima'
-};
-
-app.post('/api/generar-reporte', async (req, res) => {
+// Middleware para conectar a la base de datos
+app.use(async (req, res, next) => {
   try {
-    const cotizacionData = req.body;
-    
-    // Validación básica
-    if (!cotizacionData?.cliente || !cotizacionData?.items?.length) {
-      return res.status(400).json({ error: 'Datos incompletos' });
-    }
-
-
-    // Aquí puedes agregar lógica para calcular totales y formatear los datos si es necesario
-    // Por ejemplo, agregar precioTotalFormatted, totalFormatted, etc.
-
-    // Renderizar el HTML completo del reporte
-    const html = renderMain(empresaInfo, cotizacionData, 1, 1); // page y pages pueden ser calculados si usas paginación
-
-    // Aquí puedes guardar el HTML como PDF usando html-pdf o similar, o devolver el HTML directamente
-    // Por ejemplo, para pruebas puedes devolver el HTML:
-    res.send(html);
-    // Si quieres guardar como PDF, deberías usar html-pdf aquí y devolver la ruta del archivo generado
+    await database.connect();
+    next();
   } catch (error) {
-    if (error instanceof Error) {
-      res.status(500).json({ error: error.message });
-    } else {
-      res.status(500).json({ error: 'Unknown error' });
-    }
+    res.status(500).json({
+      success: false,
+      message: 'Error de conexión a la base de datos',
+      error: error instanceof Error ? error.message : 'Error desconocido'
+    });
   }
 });
 
-const PORT = process.env.PORT || 3000;
+// Rutas de la API
+app.use('/api/clientes', clienteRoutes);
+app.use('/api/usuarios', usuarioRoutes);
+app.use('/api/servicios', servicioRoutes);
+app.use('/api/cotizaciones', cotizacionRoutes);
+app.use('/api/reportes', reporteRoutes);
+
+// Ruta de health check
+app.get('/api/health', (req, res) => {
+  res.json({
+    success: true,
+    message: 'Servidor funcionando correctamente',
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Middleware de manejo de errores
+app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+  console.error('Error:', err);
+  res.status(500).json({
+    success: false,
+    message: 'Error interno del servidor',
+    error: serverConfig.environment === 'development' ? err.message : 'Error interno'
+  });
+});
+
+// Middleware para rutas no encontradas
+app.use('*', (req, res) => {
+  res.status(404).json({
+    success: false,
+    message: 'Ruta no encontrada'
+  });
+});
+
+const PORT = serverConfig.port;
+
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`);
+  console.log(`Ambiente: ${serverConfig.environment}`);
+});
+
+// Manejo de cierre graceful
+process.on('SIGINT', async () => {
+  console.log('Cerrando servidor...');
+  await database.disconnect();
+  process.exit(0);
+});
+
+process.on('SIGTERM', async () => {
+  console.log('Cerrando servidor...');
+  await database.disconnect();
+  process.exit(0);
 });
