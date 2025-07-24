@@ -1,21 +1,37 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Cotización {{cotizacion.numero}}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cotización ${cotizacion.numero}</title>
   <style>
-    /* Todos los estilos CSS aquí */
-    body { font-family: Arial, sans-serif; margin: 0; padding: 20px; color: #333; }
-    .header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid #ddd; padding-bottom: 10px; }
-    /* ... (otros estilos) ... */
+    body { 
+      font-family: Arial, sans-serif; 
+      margin: 0; 
+      padding: 20px; 
+      color: #333; 
+      line-height: 1.4;
+    }
+    .container { 
+      max-width: 800px; 
+      margin: 0 auto; 
+    }
+    .header { 
+      text-align: center; 
+      margin-bottom: 20px; 
+      border-bottom: 2px solid #ddd; 
+      padding-bottom: 10px; 
+    }
+    ${css}
   </style>
 </head>
 <body>
-  <!-- Los placeholders serán reemplazados por el código -->
-  ${header}
-  ${introduccion}
-  ${tabla}
-  ${cierre}
-  ${footer}
+  <div class="container">
+    ${header}
+    ${introduccion}
+    ${tabla}
+    ${cierre}
+    ${footer}
+  </div>
 </body>
 </html>

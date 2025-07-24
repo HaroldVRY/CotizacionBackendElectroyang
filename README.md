@@ -50,6 +50,90 @@ cd CotizacionBackendElectroyang
 npm install
 ```
 
+3. **Configurar variables de entorno**
+```bash
+# Copiar el archivo de ejemplo
+cp .env.example .env
+
+# Editar las variables según tu configuración
+```
+
+4. **Compilar el proyecto**
+```bash
+npm run build
+```
+
+## Scripts Disponibles
+
+### 🚀 **Desarrollo**
+```bash
+# Iniciar servidor de desarrollo con recarga automática
+npm run dev
+
+# Compilar en modo watch (recompila automáticamente)
+npm run watch
+```
+
+### 🏗️ **Build y Producción**
+```bash
+# Compilar para producción
+npm run build
+
+# Build limpio (elimina dist/ y recompila)
+npm run build:prod
+
+# Compilar y ejecutar
+npm run serve
+
+# Solo ejecutar (requiere build previo)
+npm start
+```
+
+### 🧹 **Utilidades**
+```bash
+# Limpiar carpeta dist/
+npm run clean
+
+# Ejecutar linter (cuando esté configurado)
+npm run lint
+
+# Formatear código (cuando esté configurado)  
+npm run format
+```
+
+## 📋 **Flujo de Trabajo Recomendado**
+
+### Durante Desarrollo:
+```bash
+# Opción 1: Servidor con recarga automática
+npm run dev
+
+# Opción 2: Compilación automática en terminal separada
+npm run watch
+# Y en otra terminal:
+npm start
+```
+
+### Antes de Producción:
+```bash
+# Build limpio
+npm run build:prod
+
+# Probar localmente
+npm start
+
+# Si todo funciona, hacer deploy
+```
+
+### Para Cambios Rápidos:
+```bash
+# Solo recompilar (más rápido)
+npm run build
+
+# Y reiniciar
+npm start
+```
+
 3. **Configurar base de datos**
    - La base de datos PostgreSQL ya debe estar creada
    - Configurar las variables de entorno en `.env`

@@ -22,8 +22,9 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Archivos estáticos
-app.use(express.static('public'));
+// Archivos estáticos - servir desde src/public
+app.use('/public', express.static('src/public'));
+app.use(express.static('src/public'));
 
 // Middleware para conectar a la base de datos
 app.use(async (req, res, next) => {

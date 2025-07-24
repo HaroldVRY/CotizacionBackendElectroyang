@@ -19,7 +19,13 @@ export const serverConfig = {
 export const empresaConfig: EmpresaInfo = {
   nombre: 'ELECTROYANG',
   servicio: 'SERVICIO DE BOBINADO DE TRANSFORMADORES ELÉCTRICOS Y REPARACIONES',
-  ciudad: 'Lima'
+  ciudad: 'Lima',
+  cuentasBancarias: {
+    bcp: {
+      corriente: '123-456789-0-12',
+      interbancaria: '002-123-001234567890-12'
+    }
+  }
 };
 
 export const reportConfig = {

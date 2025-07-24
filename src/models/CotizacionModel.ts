@@ -15,7 +15,12 @@ export class CotizacionModel {
 
   async getById(id: number): Promise<Cotizacion | null> {
     const query = `
-      SELECT c.*, cl.nombre as clienteNombre, u.nombre as usuarioNombre
+      SELECT 
+        c.id, c.numero, c.fecha, c.cliente_id as "clienteId", c.usuario_id as "usuarioId",
+        c.receptor, c.observaciones, c.tiempo_entrega as "tiempoEntrega", 
+        c.forma_pago as "formaPago", c.estado, c.subtotal, c.igv, c.total,
+        c.created_at as "createdAt", c.updated_at as "updatedAt",
+        cl.nombre as "clienteNombre", u.nombre as "usuarioNombre"
       FROM cotizacion c
       LEFT JOIN cliente cl ON c.cliente_id = cl.id
       LEFT JOIN usuario u ON c.usuario_id = u.id
@@ -28,9 +33,11 @@ export class CotizacionModel {
     }
     
     const cotizacion = results[0];
+    console.log('Cotización raw desde BD:', JSON.stringify(cotizacion, null, 2));
     
     // Obtener los detalles de la cotización
     const detalles = await this.getDetallesByCotizacionId(id);
+    console.log('Detalles raw desde BD:', JSON.stringify(detalles, null, 2));
     cotizacion.detalles = detalles;
     
     return cotizacion;
@@ -38,7 +45,12 @@ export class CotizacionModel {
 
   async getByNumero(numero: string): Promise<Cotizacion | null> {
     const query = `
-      SELECT c.*, cl.nombre as clienteNombre, u.nombre as usuarioNombre
+      SELECT 
+        c.id, c.numero, c.fecha, c.cliente_id as "clienteId", c.usuario_id as "usuarioId",
+        c.receptor, c.observaciones, c.tiempo_entrega as "tiempoEntrega", 
+        c.forma_pago as "formaPago", c.estado, c.subtotal, c.igv, c.total,
+        c.created_at as "createdAt", c.updated_at as "updatedAt",
+        cl.nombre as "clienteNombre", u.nombre as "usuarioNombre"
       FROM cotizacion c
       LEFT JOIN cliente cl ON c.cliente_id = cl.id
       LEFT JOIN usuario u ON c.usuario_id = u.id
@@ -156,7 +168,12 @@ export class CotizacionModel {
 
   private async getDetallesByCotizacionId(cotizacionId: number): Promise<DetalleCotizacion[]> {
     const query = `
-      SELECT dc.*, s.nombre as servicioNombre
+      SELECT 
+        dc.id, dc.cotizacion_id as "cotizacionId", dc.servicio_id as "servicioId",
+        dc.numero_item as "numeroItem", dc.cantidad, dc.descripcion, 
+        dc.precio_unitario as "precioUnitario", dc.total,
+        dc.created_at as "createdAt", dc.updated_at as "updatedAt",
+        s.nombre as "servicioNombre"
       FROM detalle_cotizacion dc
       LEFT JOIN servicio s ON dc.servicio_id = s.id
       WHERE dc.cotizacion_id = $1

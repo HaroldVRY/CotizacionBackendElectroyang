@@ -50,6 +50,10 @@ export interface Cotizacion {
   createdAt?: Date;
   updatedAt?: Date;
   
+  // Campos adicionales de las consultas con JOIN
+  clienteNombre?: string;
+  usuarioNombre?: string;
+  
   // Relaciones
   cliente?: Cliente;
   usuario?: Usuario;
@@ -67,6 +71,9 @@ export interface DetalleCotizacion {
   total: number;
   createdAt?: Date;
   updatedAt?: Date;
+  
+  // Campos adicionales de las consultas con JOIN
+  servicioNombre?: string;
   
   // Relaciones
   servicio?: Servicio;
@@ -92,6 +99,7 @@ export interface ItemCotizacion {
   cantidad: number;
   descripcion: string;
   precioUnitario: number;
+  total: number;
 }
 
 export interface Banco {
@@ -106,11 +114,14 @@ export interface CotizacionReporte {
   cliente: string;
   receptor: string;
   items: ItemCotizacion[];
+  subtotal: number;
+  igv: number;
+  total: number;
   observaciones?: string;
   tiempoEntrega: string;
   formaPago: string;
   banco?: Banco;
-  estado?: 'borrador' | 'aprobada' | 'rechazada';
+  estado?: 'borrador' | 'aprobada' | 'rechazada' | 'enviada';
 }
 
 export interface EmpresaInfo {
