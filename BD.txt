@@ -192,3 +192,89 @@ WHEN (NEW.numero IS NULL)
 EXECUTE FUNCTION generar_numero_cotizacion();
 -- ============ FIN SECCIÓN 8 ============ --
 
+
+
+
+
+-- ================== INSERTAR COTIZACIONES DE PRUEBA ==================
+-- NOTA: Este bloque usa valores existentes en la base de datos
+
+-- Cotización 2
+INSERT INTO cotizacion (
+    fecha, cliente_id, usuario_id, receptor, observaciones, 
+    tiempo_entrega, forma_pago, estado, subtotal, igv, total
+) VALUES (
+    '2025-01-20', 2, 1, 'María García - Jefa de Compras',
+    'Cotización solicitada vía email',
+    '10 días hábiles', 'Pago contra entrega', 'borrador',
+    4500.00, 810.00, 5310.00
+);
+
+-- Detalle cotización 2
+INSERT INTO detalle_cotizacion (
+    cotizacion_id, servicio_id, numero_item, cantidad, descripcion, precio_unitario, total
+) VALUES (
+    currval('cotizacion_id_seq'), 2, 1, 1, 
+    'Bobinado de Transformador 250 KVA - Incluye pruebas y transporte', 
+    4500.00, 4500.00
+);
+
+-- Cotización 3
+INSERT INTO cotizacion (
+    fecha, cliente_id, usuario_id, receptor, observaciones, 
+    tiempo_entrega, forma_pago, estado, subtotal, igv, total
+) VALUES (
+    '2025-01-25', 3, 1, 'Carlos López - Área Técnica',
+    'Solicitud para mantenimiento programado',
+    '7 días calendario', 'Transferencia bancaria', 'aprobada',
+    800.00, 144.00, 944.00
+);
+
+-- Detalle cotización 3
+INSERT INTO detalle_cotizacion (
+    cotizacion_id, servicio_id, numero_item, cantidad, descripcion, precio_unitario, total
+) VALUES (
+    currval('cotizacion_id_seq'), 4, 1, 1, 
+    'Mantenimiento preventivo de transformador - incluye revisión completa', 
+    800.00, 800.00
+);
+
+-- Cotización 4
+INSERT INTO cotizacion (
+    fecha, cliente_id, usuario_id, receptor, observaciones, 
+    tiempo_entrega, forma_pago, estado, subtotal, igv, total
+) VALUES (
+    '2025-02-01', 1, 1, 'Juan Pérez - Gerente Técnico',
+    'Servicio urgente para diagnóstico',
+    '3 días hábiles', 'Efectivo', 'rechazada',
+    300.00, 54.00, 354.00
+);
+
+-- Detalle cotización 4
+INSERT INTO detalle_cotizacion (
+    cotizacion_id, servicio_id, numero_item, cantidad, descripcion, precio_unitario, total
+) VALUES (
+    currval('cotizacion_id_seq'), 5, 1, 1, 
+    'Revisión técnica de transformador 250 KVA - incluye informe técnico', 
+    300.00, 300.00
+);
+
+-- Cotización 5
+INSERT INTO cotizacion (
+    fecha, cliente_id, usuario_id, receptor, observaciones, 
+    tiempo_entrega, forma_pago, estado, subtotal, igv, total
+) VALUES (
+    '2025-02-10', 2, 1, 'María García - Compras',
+    'Transformador con fallas intermitentes',
+    '20 días calendario', 'Crédito 30 días', 'enviada',
+    1500.00, 270.00, 1770.00
+);
+
+-- Detalle cotización 5
+INSERT INTO detalle_cotizacion (
+    cotizacion_id, servicio_id, numero_item, cantidad, descripcion, precio_unitario, total
+) VALUES (
+    currval('cotizacion_id_seq'), 3, 1, 1, 
+    'Reparación general de transformador - incluye piezas reemplazadas', 
+    1500.00, 1500.00
+);
