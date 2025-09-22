@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
-const main_1 = require("../report-templates/main/main");
 const CotizacionModel_1 = require("../models/CotizacionModel");
 const config_1 = require("../config");
 const router = (0, express_1.Router)();
@@ -31,7 +30,7 @@ router.get('/debug/empresa', (req, res) => {
         data: config_1.empresaConfig
     });
 });
-// Generar reporte de cotización por ID
+// Generar datos de cotización por ID (sin generar HTML)
 router.get('/cotizacion/:id', async (req, res) => {
     var _a, _b, _c, _d, _e;
     try {
@@ -43,23 +42,12 @@ router.get('/cotizacion/:id', async (req, res) => {
                 message: 'Cotización no encontrada'
             });
         }
-        // Debug: Log para ver qué datos llegan de la BD
-        console.log('Cotización desde BD:', JSON.stringify(cotizacion, null, 2));
-        console.log('Detalles:', JSON.stringify(cotizacion.detalles, null, 2));
-        // Convertir datos de BD a formato de reporte con cálculos y validaciones
+        // Convertir datos de BD a formato de reporte
         const items = ((_a = cotizacion.detalles) === null || _a === void 0 ? void 0 : _a.map((detalle) => {
-            // Usar tanto camelCase como snake_case por compatibilidad
-            const numeroItem = detalle.numeroItem || detalle.numeroitem || 0;
+            const numeroItem = detalle.numeroItem || 0;
             const cantidad = Number(detalle.cantidad) || 0;
-            const precioUnitario = Number(detalle.precioUnitario || detalle.preciounitario) || 0;
+            const precioUnitario = Number(detalle.precioUnitario) || 0;
             const total = cantidad * precioUnitario;
-            console.log('Detalle procesado:', {
-                numeroItem,
-                cantidad,
-                precioUnitario,
-                total,
-                descripcion: detalle.descripcion
-            });
             return {
                 numeroItem,
                 cantidad,
@@ -72,19 +60,18 @@ router.get('/cotizacion/:id', async (req, res) => {
         const subtotal = items.reduce((sum, item) => sum + (item.total || 0), 0);
         const igv = subtotal * 0.18; // 18% IGV
         const total = subtotal + igv;
-        console.log('Totales calculados:', { subtotal, igv, total });
         const cotizacionReporte = {
             numero: cotizacion.numero || '',
             fecha: cotizacion.fecha ? cotizacion.fecha.toLocaleDateString('es-PE') : '',
-            cliente: cotizacion.clienteNombre || cotizacion.clientenombre || 'Cliente no encontrado',
+            cliente: cotizacion.clienteNombre || 'Cliente no encontrado',
             receptor: cotizacion.receptor || '',
             items: items,
             subtotal: subtotal,
             igv: igv,
             total: total,
             observaciones: cotizacion.observaciones || '',
-            tiempoEntrega: cotizacion.tiempoEntrega || cotizacion.tiempoentrega || '',
-            formaPago: cotizacion.formaPago || cotizacion.formapago || '',
+            tiempoEntrega: cotizacion.tiempoEntrega || '',
+            formaPago: cotizacion.formaPago || '',
             banco: {
                 nombre: 'Banco de Crédito del Perú (BCP)',
                 cuentaCorriente: ((_c = (_b = config_1.empresaConfig.cuentasBancarias) === null || _b === void 0 ? void 0 : _b.bcp) === null || _c === void 0 ? void 0 : _c.corriente) || '',
@@ -92,21 +79,27 @@ router.get('/cotizacion/:id', async (req, res) => {
             },
             estado: cotizacion.estado
         };
-        console.log('Reporte final:', JSON.stringify(cotizacionReporte, null, 2));
-        // Renderizar el HTML completo del reporte
-        const html = (0, main_1.renderMain)(config_1.empresaConfig, cotizacionReporte, 1, 1);
-        res.send(html);
+        // Devolver los datos del reporte como JSON
+        // Nota: La generación de HTML se hace ahora en otro proyecto
+        res.json({
+            success: true,
+            message: 'Datos de cotización obtenidos correctamente. La generación de reportes se maneja en un servicio externo.',
+            data: {
+                empresa: config_1.empresaConfig,
+                cotizacion: cotizacionReporte
+            }
+        });
     }
     catch (error) {
-        console.error('Error al generar reporte:', error);
+        console.error('Error al obtener datos de cotización:', error);
         res.status(500).json({
             success: false,
-            message: 'Error al generar reporte',
+            message: 'Error al obtener datos de cotización',
             error: error instanceof Error ? error.message : 'Error desconocido'
         });
     }
 });
-// Generar reporte de cotización por número
+// Generar datos de cotización por número (sin generar HTML)
 router.get('/cotizacion/numero/:numero', async (req, res) => {
     var _a, _b, _c, _d, _e;
     try {
@@ -118,15 +111,11 @@ router.get('/cotizacion/numero/:numero', async (req, res) => {
                 message: 'Cotización no encontrada'
             });
         }
-        // Debug: Log para ver qué datos llegan de la BD
-        console.log('Cotización desde BD (por número):', JSON.stringify(cotizacion, null, 2));
-        console.log('Detalles:', JSON.stringify(cotizacion.detalles, null, 2));
-        // Convertir datos de BD a formato de reporte con cálculos y validaciones
+        // Convertir datos de BD a formato de reporte
         const items = ((_a = cotizacion.detalles) === null || _a === void 0 ? void 0 : _a.map((detalle) => {
-            // Usar tanto camelCase como snake_case por compatibilidad
-            const numeroItem = detalle.numeroItem || detalle.numeroitem || 0;
+            const numeroItem = detalle.numeroItem || 0;
             const cantidad = Number(detalle.cantidad) || 0;
-            const precioUnitario = Number(detalle.precioUnitario || detalle.preciounitario) || 0;
+            const precioUnitario = Number(detalle.precioUnitario) || 0;
             const total = cantidad * precioUnitario;
             return {
                 numeroItem,
@@ -143,15 +132,15 @@ router.get('/cotizacion/numero/:numero', async (req, res) => {
         const cotizacionReporte = {
             numero: cotizacion.numero || '',
             fecha: cotizacion.fecha ? cotizacion.fecha.toLocaleDateString('es-PE') : '',
-            cliente: cotizacion.clienteNombre || cotizacion.clientenombre || 'Cliente no encontrado',
+            cliente: cotizacion.clienteNombre || 'Cliente no encontrado',
             receptor: cotizacion.receptor || '',
             items: items,
             subtotal: subtotal,
             igv: igv,
             total: total,
             observaciones: cotizacion.observaciones || '',
-            tiempoEntrega: cotizacion.tiempoEntrega || cotizacion.tiempoentrega || '',
-            formaPago: cotizacion.formaPago || cotizacion.formapago || '',
+            tiempoEntrega: cotizacion.tiempoEntrega || '',
+            formaPago: cotizacion.formaPago || '',
             banco: {
                 nombre: 'Banco de Crédito del Perú (BCP)',
                 cuentaCorriente: ((_c = (_b = config_1.empresaConfig.cuentasBancarias) === null || _b === void 0 ? void 0 : _b.bcp) === null || _c === void 0 ? void 0 : _c.corriente) || '',
@@ -159,15 +148,22 @@ router.get('/cotizacion/numero/:numero', async (req, res) => {
             },
             estado: cotizacion.estado
         };
-        // Renderizar el HTML completo del reporte
-        const html = (0, main_1.renderMain)(config_1.empresaConfig, cotizacionReporte, 1, 1);
-        res.send(html);
+        // Devolver los datos del reporte como JSON
+        // Nota: La generación de HTML se hace ahora en otro proyecto
+        res.json({
+            success: true,
+            message: 'Datos de cotización obtenidos correctamente. La generación de reportes se maneja en un servicio externo.',
+            data: {
+                empresa: config_1.empresaConfig,
+                cotizacion: cotizacionReporte
+            }
+        });
     }
     catch (error) {
-        console.error('Error al generar reporte:', error);
+        console.error('Error al obtener datos de cotización:', error);
         res.status(500).json({
             success: false,
-            message: 'Error al generar reporte',
+            message: 'Error al obtener datos de cotización',
             error: error instanceof Error ? error.message : 'Error desconocido'
         });
     }

@@ -6,8 +6,8 @@ Sistema completo de gestión de cotizaciones para Electroyang, incluyendo APIs C
 
 - ✅ API REST completa para gestión de cotizaciones
 - ✅ CRUD para Clientes, Usuarios, Servicios y Cotizaciones
-- ✅ Generación de reportes en HTML
-- ✅ Base de datos MySQL
+- ✅ API de datos para reportes (generación externa)
+- ✅ Base de datos PostgreSQL
 - ✅ Validación de datos
 - ✅ Manejo de errores
 - ✅ Arquitectura escalable
@@ -30,7 +30,7 @@ src/
 ├── database/             # Configuración de BD
 ├── types/                # Tipos de TypeScript
 ├── utils/                # Utilidades
-├── report-templates/     # Plantillas de reportes
+├── public/               # Archivos estáticos
 └── app.ts               # Aplicación principal
 
 database/
@@ -197,8 +197,12 @@ npm start
 - `DELETE /api/cotizaciones/:id` - Eliminar cotización
 
 ### Reportes
-- `GET /api/reportes/cotizacion/:id` - Generar reporte HTML por ID
-- `GET /api/reportes/cotizacion/numero/:numero` - Generar reporte por número
+- `GET /api/reportes/cotizacion/:id` - Obtener datos de cotización para reporte por ID
+- `GET /api/reportes/cotizacion/numero/:numero` - Obtener datos de cotización para reporte por número
+- `GET /api/reportes/debug/cotizacion/:id` - Debug: datos de cotización desde BD
+- `GET /api/reportes/debug/empresa` - Debug: configuración de empresa
+
+**Nota**: Este backend solo proporciona los datos. La generación de reportes HTML/PDF se maneja en un proyecto separado.
 
 ### Health Check
 - `GET /api/health` - Verificar estado del servidor
@@ -206,10 +210,16 @@ npm start
 ## Próximas Funcionalidades
 
 - [ ] Autenticación JWT
-- [ ] Generación de PDF
 - [ ] Envío de cotizaciones por email
 - [ ] Dashboard de métricas
 - [ ] Sistema de notificaciones
 - [ ] API para servicios/productos
 - [ ] Historial de cambios
 - [ ] Exportación a Excel
+- [ ] Integración con servicio externo de reportes
+
+## Notas Importantes
+
+- La generación de reportes HTML/PDF se maneja en un proyecto separado
+- Este backend solo expone las APIs de datos necesarias para la generación de reportes
+- Los endpoints de reportes devuelven datos JSON estructurados para el servicio externo

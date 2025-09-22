@@ -136,30 +136,5 @@ export interface EmpresaInfo {
   };
 }
 
-export interface CotizacionConCalculos extends CotizacionReporte {
-  items: (ItemCotizacion & {
-    total: number;
-    precioUnitarioFormatted: string;
-    totalFormatted: string;
-  })[];
-  precioTotal: number;
-  precioTotalFormatted: string;
-  precioTotalLetras: string;
-  mostrarDatosBancarios: boolean;
-}
-
-export interface ReportOptions {
-  format: 'A4' | 'Letter';
-  border: {
-    top: string;
-    right: string;
-    bottom: string;
-    left: string;
-  };
-  footer: {
-    height: string;
-    contents: {
-      default: string;
-    };
-  };
-}
+// Nota: Los tipos para formateo de reportes y opciones de PDF 
+// se manejan ahora en el servicio externo de generación de reportes

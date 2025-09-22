@@ -10,6 +10,7 @@ import clienteRoutes from './routes/clienteRoutes';
 import usuarioRoutes from './routes/usuarioRoutes';
 import servicioRoutes from './routes/servicioRoutes';
 import cotizacionRoutes from './routes/cotizacionRoutes';
+import reporteRoutes from './routes/reporteRoutes';
 
 const app = express();
 
@@ -44,6 +45,7 @@ app.use('/api/clientes', clienteRoutes);
 app.use('/api/usuarios', usuarioRoutes);
 app.use('/api/servicios', servicioRoutes);
 app.use('/api/cotizaciones', cotizacionRoutes);
+app.use('/api/reportes', reporteRoutes);
 
 // Ruta de health check
 app.get('/api/health', (req, res) => {

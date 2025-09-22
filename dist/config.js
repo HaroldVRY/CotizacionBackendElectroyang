@@ -10,7 +10,7 @@ exports.dbConfig = {
     host: process.env.DB_HOST || 'localhost',
     port: parseInt(process.env.DB_PORT || '5432'),
     user: process.env.DB_USER || 'postgres',
-    password: process.env.DB_PASSWORD || '',
+    password: process.env.DB_PASSWORD || '12345',
     database: process.env.DB_NAME || 'electroyang_cotizaciones'
 };
 exports.serverConfig = {
@@ -37,20 +37,6 @@ exports.reportConfig = {
             month: 'long',
             day: 'numeric'
         }
-    },
-    pdfOptions: {
-        format: 'A4',
-        border: {
-            top: '10mm',
-            right: '10mm',
-            bottom: '10mm',
-            left: '10mm'
-        },
-        footer: {
-            height: '10mm',
-            contents: {
-                default: '<div style="text-align: center; font-size: 10px;">Página {{page}} de {{pages}}</div>'
-            }
-        }
     }
+    // Nota: La configuración de PDF se maneja en el servicio externo de reportes
 };
