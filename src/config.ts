@@ -4,11 +4,11 @@ import { EmpresaInfo } from './types/index';
 dotenv.config();
 
 export const dbConfig = {
-  host: process.env.DB_HOST || 'localhost',
-  port: parseInt(process.env.DB_PORT || '5432'),
+  host: process.env.DB_HOST || 'db.dgilpqompmbcfcjtpeme.supabase.co',
+  port: parseInt(process.env.DB_PORT || '5432', 10),
   user: process.env.DB_USER || 'postgres',
-  password: process.env.DB_PASSWORD || '12345',
-  database: process.env.DB_NAME || 'electroyang_cotizaciones'
+  password: process.env.DB_PASSWORD || 'harolmazna123',
+  database: process.env.DB_NAME || 'postgres'
 };
 
 export const serverConfig = {

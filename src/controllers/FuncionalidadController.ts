@@ -1,23 +1,22 @@
 import { Request, Response } from 'express';
-import { UsuarioModel } from '../models/UsuarioModel';
+import { FuncionalidadModel } from '../models/FuncionalidadModel';
 import { validationResult } from 'express-validator';
-import * as crypto from 'crypto';
 
-const usuarioModel = new UsuarioModel();
+const funcionalidadModel = new FuncionalidadModel();
 
-export class UsuarioController {
+export class FuncionalidadController {
   async getAll(req: Request, res: Response): Promise<void> {
     try {
-      const usuarios = await usuarioModel.getAll();
+      const funcionalidades = await funcionalidadModel.getAll();
       res.json({
         success: true,
-        data: usuarios,
-        count: usuarios.length
+        data: funcionalidades,
+        count: funcionalidades.length
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        message: 'Error al obtener usuarios',
+        message: 'Error al obtener funcionalidades',
         error: error instanceof Error ? error.message : 'Error desconocido'
       });
     }
@@ -26,24 +25,24 @@ export class UsuarioController {
   async getById(req: Request, res: Response): Promise<void> {
     try {
       const { id } = req.params;
-      const usuario = await usuarioModel.getById(parseInt(id));
+      const funcionalidad = await funcionalidadModel.getById(parseInt(id));
       
-      if (!usuario) {
+      if (!funcionalidad) {
         res.status(404).json({
           success: false,
-          message: 'Usuario no encontrado'
+          message: 'Funcionalidad no encontrada'
         });
         return;
       }
       
       res.json({
         success: true,
-        data: usuario
+        data: funcionalidad
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        message: 'Error al obtener usuario',
+        message: 'Error al obtener funcionalidad',
         error: error instanceof Error ? error.message : 'Error desconocido'
       });
     }
@@ -61,32 +60,18 @@ export class UsuarioController {
         return;
       }
 
-      const { rol_id, nombres, apellidos, email, password } = req.body;
-      
-      // Verificar si el email ya existe
-      const existingUsuario = await usuarioModel.getByEmail(email);
-      if (existingUsuario) {
-        res.status(400).json({
-          success: false,
-          message: 'El email ya está registrado'
-        });
-        return;
-      }
-
-      // Hash la contraseña
-      const password_hash = crypto.createHash('sha256').update(password).digest('hex');
-      
-      const usuario = await usuarioModel.create(rol_id, nombres, apellidos, email, password_hash);
+      const { nombre, ruta_frontend, descripcion } = req.body;
+      const funcionalidad = await funcionalidadModel.create(nombre, ruta_frontend, descripcion);
       
       res.status(201).json({
         success: true,
-        message: 'Usuario creado exitosamente',
-        data: usuario
+        message: 'Funcionalidad creada exitosamente',
+        data: funcionalidad
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        message: 'Error al crear usuario',
+        message: 'Error al crear funcionalidad',
         error: error instanceof Error ? error.message : 'Error desconocido'
       });
     }
@@ -105,28 +90,28 @@ export class UsuarioController {
       }
 
       const { id } = req.params;
-      const { rol_id, nombres, apellidos, email, estado } = req.body;
+      const { nombre, ruta_frontend, descripcion, estado } = req.body;
       
-      const existingUsuario = await usuarioModel.getById(parseInt(id));
-      if (!existingUsuario) {
+      const existingFuncionalidad = await funcionalidadModel.getById(parseInt(id));
+      if (!existingFuncionalidad) {
         res.status(404).json({
           success: false,
-          message: 'Usuario no encontrado'
+          message: 'Funcionalidad no encontrada'
         });
         return;
       }
 
-      const usuario = await usuarioModel.update(parseInt(id), rol_id, nombres, apellidos, email, estado);
+      const funcionalidad = await funcionalidadModel.update(parseInt(id), nombre, ruta_frontend, descripcion, estado);
       
       res.json({
         success: true,
-        message: 'Usuario actualizado exitosamente',
-        data: usuario
+        message: 'Funcionalidad actualizada exitosamente',
+        data: funcionalidad
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        message: 'Error al actualizar usuario',
+        message: 'Error al actualizar funcionalidad',
         error: error instanceof Error ? error.message : 'Error desconocido'
       });
     }
@@ -136,25 +121,25 @@ export class UsuarioController {
     try {
       const { id } = req.params;
       
-      const existingUsuario = await usuarioModel.getById(parseInt(id));
-      if (!existingUsuario) {
+      const existingFuncionalidad = await funcionalidadModel.getById(parseInt(id));
+      if (!existingFuncionalidad) {
         res.status(404).json({
           success: false,
-          message: 'Usuario no encontrado'
+          message: 'Funcionalidad no encontrada'
         });
         return;
       }
 
-      await usuarioModel.delete(parseInt(id));
+      await funcionalidadModel.delete(parseInt(id));
       
       res.json({
         success: true,
-        message: 'Usuario eliminado exitosamente'
+        message: 'Funcionalidad eliminada exitosamente'
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        message: 'Error al eliminar usuario',
+        message: 'Error al eliminar funcionalidad',
         error: error instanceof Error ? error.message : 'Error desconocido'
       });
     }
@@ -164,21 +149,21 @@ export class UsuarioController {
     try {
       const { id } = req.params;
       
-      const existingUsuario = await usuarioModel.getById(parseInt(id));
-      if (!existingUsuario) {
+      const existingFuncionalidad = await funcionalidadModel.getById(parseInt(id));
+      if (!existingFuncionalidad) {
         res.status(404).json({
           success: false,
-          message: 'Usuario no encontrado'
+          message: 'Funcionalidad no encontrada'
         });
         return;
       }
 
-      const usuario = await usuarioModel.toggleEstado(parseInt(id));
+      const funcionalidad = await funcionalidadModel.toggleEstado(parseInt(id));
       
       res.json({
         success: true,
-        message: 'Estado del usuario actualizado',
-        data: usuario
+        message: 'Estado de la funcionalidad actualizado',
+        data: funcionalidad
       });
     } catch (error) {
       res.status(500).json({
@@ -189,4 +174,3 @@ export class UsuarioController {
     }
   }
 }
-

@@ -45,11 +45,12 @@ const config_1 = require("./config");
 const connection_1 = require("./database/connection");
 const swagger_1 = __importDefault(require("./swagger"));
 // Importar rutas
-const clienteRoutes_1 = __importDefault(require("./routes/clienteRoutes"));
+const rolRoutes_1 = __importDefault(require("./routes/rolRoutes"));
 const usuarioRoutes_1 = __importDefault(require("./routes/usuarioRoutes"));
-const servicioRoutes_1 = __importDefault(require("./routes/servicioRoutes"));
-const cotizacionRoutes_1 = __importDefault(require("./routes/cotizacionRoutes"));
-const reporteRoutes_1 = __importDefault(require("./routes/reporteRoutes"));
+const funcionalidadRoutes_1 = __importDefault(require("./routes/funcionalidadRoutes"));
+const accesoRoutes_1 = __importDefault(require("./routes/accesoRoutes"));
+const parametroRoutes_1 = __importDefault(require("./routes/parametroRoutes"));
+const maestroRoutes_1 = __importDefault(require("./routes/maestroRoutes"));
 const app = (0, express_1.default)();
 const PORT = config_1.serverConfig.port;
 // Middlewares de seguridad
@@ -63,19 +64,20 @@ app.use('/public', express_1.default.static('src/public'));
 app.use(express_1.default.static('src/public'));
 // Documentación de Swagger - API Docs
 app.use('/api-docs', swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(swagger_1.default));
-// Ruta raíz - redireccionar a Swagger
+// Ruta raíz
 app.get('/', (req, res) => {
     res.json({
         success: true,
-        message: 'Bienvenido a Cotizaciones API - Electroyang',
-        version: '1.0.0',
+        message: 'Bienvenido a Administración API - Electroyang',
+        version: '2.0.0',
         documentation: `http://localhost:${PORT}/api-docs`,
         endpoints: {
-            clientes: '/api/clientes',
-            usuarios: '/api/usuarios',
-            servicios: '/api/servicios',
-            cotizaciones: '/api/cotizaciones',
-            reportes: '/api/reportes',
+            roles: '/api/admin/roles',
+            usuarios: '/api/admin/usuarios',
+            funcionalidades: '/api/admin/funcionalidades',
+            accesos: '/api/admin/accesos',
+            parametros: '/api/admin/parametros',
+            maestros: '/api/admin/maestros',
             health: '/api/health'
         }
     });
@@ -94,12 +96,13 @@ app.use(async (req, res, next) => {
         });
     }
 });
-// Rutas de la API
-app.use('/api/clientes', clienteRoutes_1.default);
-app.use('/api/usuarios', usuarioRoutes_1.default);
-app.use('/api/servicios', servicioRoutes_1.default);
-app.use('/api/cotizaciones', cotizacionRoutes_1.default);
-app.use('/api/reportes', reporteRoutes_1.default);
+// Rutas de la API - Admin
+app.use('/api/admin/roles', rolRoutes_1.default);
+app.use('/api/admin/usuarios', usuarioRoutes_1.default);
+app.use('/api/admin/funcionalidades', funcionalidadRoutes_1.default);
+app.use('/api/admin/accesos', accesoRoutes_1.default);
+app.use('/api/admin/parametros', parametroRoutes_1.default);
+app.use('/api/admin/maestros', maestroRoutes_1.default);
 // Ruta de health check
 app.get('/api/health', (req, res) => {
     res.json({

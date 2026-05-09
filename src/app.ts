@@ -8,11 +8,12 @@ import { database } from './database/connection';
 import swaggerSpec from './swagger';
 
 // Importar rutas
-import clienteRoutes from './routes/clienteRoutes';
+import rolRoutes from './routes/rolRoutes';
 import usuarioRoutes from './routes/usuarioRoutes';
-import servicioRoutes from './routes/servicioRoutes';
-import cotizacionRoutes from './routes/cotizacionRoutes';
-import reporteRoutes from './routes/reporteRoutes';
+import funcionalidadRoutes from './routes/funcionalidadRoutes';
+import accesoRoutes from './routes/accesoRoutes';
+import parametroRoutes from './routes/parametroRoutes';
+import maestroRoutes from './routes/maestroRoutes';
 
 const app = express();
 const PORT = serverConfig.port;
@@ -32,19 +33,20 @@ app.use(express.static('src/public'));
 // Documentación de Swagger - API Docs
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-// Ruta raíz - redireccionar a Swagger
+// Ruta raíz
 app.get('/', (req, res) => {
   res.json({
     success: true,
-    message: 'Bienvenido a Cotizaciones API - Electroyang',
-    version: '1.0.0',
+    message: 'Bienvenido a Administración API - Electroyang',
+    version: '2.0.0',
     documentation: `http://localhost:${PORT}/api-docs`,
     endpoints: {
-      clientes: '/api/clientes',
-      usuarios: '/api/usuarios',
-      servicios: '/api/servicios',
-      cotizaciones: '/api/cotizaciones',
-      reportes: '/api/reportes',
+      roles: '/api/admin/roles',
+      usuarios: '/api/admin/usuarios',
+      funcionalidades: '/api/admin/funcionalidades',
+      accesos: '/api/admin/accesos',
+      parametros: '/api/admin/parametros',
+      maestros: '/api/admin/maestros',
       health: '/api/health'
     }
   });
@@ -64,12 +66,13 @@ app.use(async (req, res, next) => {
   }
 });
 
-// Rutas de la API
-app.use('/api/clientes', clienteRoutes);
-app.use('/api/usuarios', usuarioRoutes);
-app.use('/api/servicios', servicioRoutes);
-app.use('/api/cotizaciones', cotizacionRoutes);
-app.use('/api/reportes', reporteRoutes);
+// Rutas de la API - Admin
+app.use('/api/admin/roles', rolRoutes);
+app.use('/api/admin/usuarios', usuarioRoutes);
+app.use('/api/admin/funcionalidades', funcionalidadRoutes);
+app.use('/api/admin/accesos', accesoRoutes);
+app.use('/api/admin/parametros', parametroRoutes);
+app.use('/api/admin/maestros', maestroRoutes);
 
 // Ruta de health check
 app.get('/api/health', (req, res) => {
