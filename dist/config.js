@@ -14,7 +14,7 @@ exports.dbConfig = {
     database: process.env.DB_NAME || 'electroyang_cotizaciones'
 };
 exports.serverConfig = {
-    port: parseInt(process.env.PORT || '3000'),
+    port: parseInt(process.env.PORT || '3001', 10),
     environment: process.env.NODE_ENV || 'development'
 };
 exports.empresaConfig = {

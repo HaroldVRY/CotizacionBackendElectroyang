@@ -145,7 +145,7 @@ DB_PORT=5432
 DB_USER=postgres
 DB_PASSWORD=tu_password
 DB_NAME=electroyang_cotizaciones
-PORT=3000
+PORT=3001
 NODE_ENV=development
 ```
 

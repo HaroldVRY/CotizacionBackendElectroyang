@@ -40,8 +40,10 @@ const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const helmet_1 = __importDefault(require("helmet"));
 const bodyParser = __importStar(require("body-parser"));
+const swagger_ui_express_1 = __importDefault(require("swagger-ui-express"));
 const config_1 = require("./config");
 const connection_1 = require("./database/connection");
+const swagger_1 = __importDefault(require("./swagger"));
 // Importar rutas
 const clienteRoutes_1 = __importDefault(require("./routes/clienteRoutes"));
 const usuarioRoutes_1 = __importDefault(require("./routes/usuarioRoutes"));
@@ -49,6 +51,7 @@ const servicioRoutes_1 = __importDefault(require("./routes/servicioRoutes"));
 const cotizacionRoutes_1 = __importDefault(require("./routes/cotizacionRoutes"));
 const reporteRoutes_1 = __importDefault(require("./routes/reporteRoutes"));
 const app = (0, express_1.default)();
+const PORT = config_1.serverConfig.port;
 // Middlewares de seguridad
 app.use((0, helmet_1.default)());
 app.use((0, cors_1.default)());
@@ -58,6 +61,25 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // Archivos estáticos - servir desde src/public
 app.use('/public', express_1.default.static('src/public'));
 app.use(express_1.default.static('src/public'));
+// Documentación de Swagger - API Docs
+app.use('/api-docs', swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(swagger_1.default));
+// Ruta raíz - redireccionar a Swagger
+app.get('/', (req, res) => {
+    res.json({
+        success: true,
+        message: 'Bienvenido a Cotizaciones API - Electroyang',
+        version: '1.0.0',
+        documentation: `http://localhost:${PORT}/api-docs`,
+        endpoints: {
+            clientes: '/api/clientes',
+            usuarios: '/api/usuarios',
+            servicios: '/api/servicios',
+            cotizaciones: '/api/cotizaciones',
+            reportes: '/api/reportes',
+            health: '/api/health'
+        }
+    });
+});
 // Middleware para conectar a la base de datos
 app.use(async (req, res, next) => {
     try {
@@ -102,9 +124,8 @@ app.use('*', (req, res) => {
         message: 'Ruta no encontrada'
     });
 });
-const PORT = config_1.serverConfig.port;
 app.listen(PORT, () => {
-    console.log(`Servidor corriendo en http://localhost:${PORT}`);
+    console.log(`Servidor corriendo en puerto ${PORT} (http://localhost:${PORT})`);
     console.log(`Ambiente: ${config_1.serverConfig.environment}`);
 });
 // Manejo de cierre graceful

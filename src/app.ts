@@ -2,8 +2,10 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import * as bodyParser from 'body-parser';
+import swaggerUi from 'swagger-ui-express';
 import { serverConfig } from './config';
 import { database } from './database/connection';
+import swaggerSpec from './swagger';
 
 // Importar rutas
 import clienteRoutes from './routes/clienteRoutes';
@@ -13,6 +15,7 @@ import cotizacionRoutes from './routes/cotizacionRoutes';
 import reporteRoutes from './routes/reporteRoutes';
 
 const app = express();
+const PORT = serverConfig.port;
 
 // Middlewares de seguridad
 app.use(helmet());
@@ -25,6 +28,27 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // Archivos estáticos - servir desde src/public
 app.use('/public', express.static('src/public'));
 app.use(express.static('src/public'));
+
+// Documentación de Swagger - API Docs
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+// Ruta raíz - redireccionar a Swagger
+app.get('/', (req, res) => {
+  res.json({
+    success: true,
+    message: 'Bienvenido a Cotizaciones API - Electroyang',
+    version: '1.0.0',
+    documentation: `http://localhost:${PORT}/api-docs`,
+    endpoints: {
+      clientes: '/api/clientes',
+      usuarios: '/api/usuarios',
+      servicios: '/api/servicios',
+      cotizaciones: '/api/cotizaciones',
+      reportes: '/api/reportes',
+      health: '/api/health'
+    }
+  });
+});
 
 // Middleware para conectar a la base de datos
 app.use(async (req, res, next) => {
@@ -74,10 +98,8 @@ app.use('*', (req, res) => {
   });
 });
 
-const PORT = serverConfig.port;
-
 app.listen(PORT, () => {
-  console.log(`Servidor corriendo en http://localhost:${PORT}`);
+  console.log(`Servidor corriendo en puerto ${PORT} (http://localhost:${PORT})`);
   console.log(`Ambiente: ${serverConfig.environment}`);
 });
 
